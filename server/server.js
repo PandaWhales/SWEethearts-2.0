@@ -11,6 +11,7 @@ const exploreRouter = require('./Routers/exploreRouter');
 const submitRouter = require('./Routers/submitRouter');
 const loginRouter = require('./Routers/loginRouter');
 const profileRouter = require('./Routers/profileRouter');
+const authController = require('./Controllers/authController');
 const flash = require('express-flash');
 const initializePassport = require('./passport');
 const passport = require('passport');
@@ -39,6 +40,9 @@ app.use('/api/signup', signUpRouter);
 app.use('/api/explore', exploreRouter);
 app.use('/api/submit', submitRouter);
 app.use('/api/profile', profileRouter);
+app.get('/api/loginstatus', authController.isLoggedIn, (req, res) => {
+  res.json([res.locals.isLoggedIn, res.locals.user]);
+});
 
 // globoal error handler
 app.use((err, req, res, next) => {
