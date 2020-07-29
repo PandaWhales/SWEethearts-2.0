@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import '../styles/login-signup.scss';
 import '../../node_modules/bootstrap/dist/css/bootstrap.css';
 import { Form, Button } from 'react-bootstrap';
+import axios from 'axios';
 
 const Login = (props) => {
   const { authStatus, setAuthStatus } = props;
@@ -41,6 +42,11 @@ const Login = (props) => {
     setLoginInputs({ ...loginInputs, [e.target.id]: e.target.value });
   };
 
+  const handleGitHubSubmit = () => {
+    console.log('clicked!');
+    axios.get('/api/auth/github');
+  };
+
   return loginStatus || authStatus.isLoggedIn ? (
     <Redirect to={{ pathname: '/explore' }} />
   ) : (
@@ -75,6 +81,9 @@ const Login = (props) => {
             Sorry, your username/password was invalid.
           </div>
         </Form>
+        <Button variant="primary" type="submit" onClick={handleGitHubSubmit}>
+          Log In with GitHub
+        </Button>
       </div>
     </div>
   );
