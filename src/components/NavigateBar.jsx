@@ -5,8 +5,9 @@ import {
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-const NavigateBar = () => {
-  return (
+const NavigateBar = ({ authStatus }) => {
+  const { isLoggedIn, username } = authStatus;
+  return isLoggedIn ? (
     <Navbar bg="primary" variant="dark">
       {/* Leftside Nav Logo/Link */}
       {/* TODO: Point this href to `/explore` if User is authenticated */}
@@ -24,6 +25,31 @@ const NavigateBar = () => {
             Submit Idea
           </Nav.Link>
         </Link>
+        <Link to="/profile">
+          <Nav.Link style={{ color: 'white' }} href="/profile">
+            My Profile
+          </Nav.Link>
+        </Link>
+        <Link to="/login">
+          <Nav.Link style={{ color: 'white' }} href="/login">
+            Log Out
+          </Nav.Link>
+        </Link>
+      </Nav>
+    </Navbar>
+  ) : (
+    <Navbar bg="primary" variant="dark">
+      {/* Leftside Nav Logo/Link */}
+      {/* TODO: Point this href to `/explore` if User is authenticated */}
+      <Link to="/">
+        <Navbar.Brand>Scratch Project</Navbar.Brand>
+      </Link>
+      {/* Rightside Nav Links */}
+      {/* Set class for Login and Signup button Nav item to `margin-left: auto;`*/}
+      <Nav className="ml-auto">
+        {/* TODO: Remove inline styling in favor of Bootstrap or separate stylesheet */}
+
+        {/* temporary link to render submit idea page */}
         <Link to="/login">
           <Nav.Link style={{ color: 'white' }} href="/login">
             Login
