@@ -6,7 +6,7 @@ import {
 import { Link } from 'react-router-dom';
 
 const NavigateBar = ({ authStatus }) => {
-  const { isLoggedIn } = authStatus;
+  const { isLoggedIn, username } = authStatus;
   return isLoggedIn ? (
     <Navbar bg="primary" variant="dark">
       {/* Leftside Nav Logo/Link */}
@@ -23,6 +23,11 @@ const NavigateBar = ({ authStatus }) => {
         <Link to="/submit">
           <Nav.Link style={{ color: 'white' }} href="/submit">
             Submit Idea
+          </Nav.Link>
+        </Link>
+        <Link to="/profile">
+          <Nav.Link style={{ color: 'white' }} href="/profile">
+            My Profile
           </Nav.Link>
         </Link>
         <Link to="/login">
