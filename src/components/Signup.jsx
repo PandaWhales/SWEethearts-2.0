@@ -3,6 +3,8 @@ import { Redirect } from 'react-router-dom';
 import '../styles/login-signup.scss';
 import '../../node_modules/bootstrap/dist/css/bootstrap.css';
 import { Form, Button } from 'react-bootstrap';
+import '../components/Profile';
+import Profile from '../components/Profile';
 
 const Signup = (props) => {
   const { authStatus, setAuthStatus } = props;
@@ -14,6 +16,11 @@ const Signup = (props) => {
     password: '',
     confirmPassword: '',
     email: '',
+    linkedin: '',
+    githubhandle: '',
+    personalpage: '',
+    about: '',
+    userTechStack: [],
   });
 
   const [errorMsg, setErrorMsg] = useState('');
@@ -22,22 +29,32 @@ const Signup = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const {
-      username,
-      password,
-      email,
-      confirmPassword,
       firstname,
       lastname,
+      username,
+      password,
+      confirmPassword,
+      email,
+      linkedin,
+      githubhandle,
+      personalpage,
+      about,
+      userTechStack: [],
     } = registrationInputs;
     if (password !== confirmPassword)
       return setErrorMsg(`Passwords don't match!`);
 
     const body = {
+      firstname,
+      lastname,
       username,
       password,
       email,
-      firstname,
-      lastname,
+      linkedin,
+      githubhandle,
+      personalpage,
+      about,
+      userTechStack: [],
     };
 
     let response = await fetch('/api/signup', {
@@ -47,12 +64,12 @@ const Signup = (props) => {
       },
       body: JSON.stringify(body),
     });
-
+    
     if (response.status === 200) {
       setRegisterStatus(true);
       setAuthStatus({ isLoggedIn: true, username });
     } else
-      setErrorMsg('New user could not be created - duplicate username/email');
+    setErrorMsg('New user could not be created - duplicate username/email');
   };
 
   const setInput = (e) => {
@@ -61,15 +78,16 @@ const Signup = (props) => {
       [e.target.id]: e.target.value,
     });
   };
-
+  
   return registerStatus || authStatus.isLoggedIn ? (
     <Redirect
-      to={{
-        pathname: '/explore',
-      }}
+    to={{
+      pathname: '/explore',
+    }}
     />
-  ) : (
-    <div className="login-container">
+    ) : (
+      <div className="login-container">
+      {/* <Profile registrationInputs={registrationInputs} setRegistrationInputs={setRegistrationInputs}/> */}
       <div className="login-box">
         <center>
           <h4>Welcome!</h4>
@@ -129,6 +147,46 @@ const Signup = (props) => {
             <Form.Control
               type="password"
               placeholder="Confirm Password"
+              onChange={setInput}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group controlId="linkedin">
+            <Form.Label>LinkedIn</Form.Label>
+            <Form.Control
+              type="linkedin"
+              placeholder="LinkedIn URL"
+              onChange={setInput}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group controlId="githubhandle">
+            <Form.Label>GitHub</Form.Label>
+            <Form.Control
+              type="githubhandle"
+              placeholder="gitHubHandle URL"
+              onChange={setInput}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group controlId="personalpage">
+            <Form.Label>Personal Page</Form.Label>
+            <Form.Control
+              type="personalpage"
+              placeholder="Personal Page URL"
+              onChange={setInput}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group controlId="about">
+            <Form.Label>About</Form.Label>
+            <Form.Control
+              type="about"
+              placeholder="About you"
               onChange={setInput}
               required
             />

@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react'
 import { Container, Col, Row, Button } from 'react-bootstrap';
 import Spinner from './Spinner';
 import '../styles/user-profile.scss';
+import axios from 'axios'
 
 const Profile = (props) => {
   /*
@@ -10,13 +11,22 @@ const Profile = (props) => {
    * authStatus always passed in from App
    */
   let { ideaCreator, authStatus } = props;
-
+console.log('auth',authStatus)
+// console.log('REG STATUS', registrationInputs)
   // Destructure currently authenticated user's username from authStatus
-  let { username } = authStatus;
+  // let { firstname,
+  //   lastname,
+  //   email,
+  //   linkedin,
+  //   githubhandle,
+  //   personalpage,
+  //   about, } = registrationInputs;
 
+  let { username } = authStatus;
   // Initialize creator name-to-display to currently authenticated user
   let creatorName = username;
-
+  // console.log('USERNAME', username)
+  // console.log('LINKED', linkedin)
   // Accessing Profile from Idea Page?
   if (ideaCreator) {
     console.log('idea creator is : ', ideaCreator)
@@ -27,20 +37,52 @@ const Profile = (props) => {
     }
   }
   // Set up user data to display on Profile
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState({
+    firstname: '',
+    lastname: '',
+    username: '',
+    password: '',
+    confirmPassword: '',
+    email: '',
+    linkedin: '',
+    githubhandle: '',
+    personalpage: '',
+    about: '',
+  });
 
   // componentDidMount() functional equivalent
   useEffect(() => {
+    const getUser = async () => {
+      // Get all existing user data, sending username as a parameter
+      console.log('creator name', creatorName)
+      const res = await axios.get(`/api/profile/${creatorName}`);
+      console.log('resssssssssssssssssssssssssssssssssss', res.data)
+      // Expect in response an object with all User table column properties
+      // const userTableData = await res.json();
+      // setUserData(userTableData);
+      const {firstname,
+        lastname,
+        username,
+        email,
+        linkedin,
+        githubhandle,
+        personalpage,
+        about} = res.data
+
+      setUserData({
+        firstname: firstname,
+        lastname: lastname,
+        username: username,
+        email: email,
+        linkedin: linkedin,
+        githubhandle: githubhandle,
+        personalpage: personalpage,
+        about: about,
+      })
+    };
     getUser();
   }, []);
 
-  const getUser = async () => {
-    // Get all existing user data, sending username as a parameter
-    const res = await fetch(`/api/profile/${creatorName}`);
-    // Expect in response an object with all User table column properties
-    const userTableData = await res.json();
-    setUserData(userTableData);
-  };
 
   /* 
    * PROFILE COMPONENT USER FLOW:
@@ -79,6 +121,30 @@ const Profile = (props) => {
           <Fragment>Where else can your future teammates contact you?</Fragment>
         </Col>
       </Row>
+      <div className="row">
+        <div className="col">
+          Full Name: {userData.username}
+        </div>
+        <div className="col">
+          Github: {userData.githubhandle}
+        </div>
+        </div>
+        <div className="row">
+        <div className="col">
+          About: {userData.about}
+        </div>
+        <div className="col">
+          LinkedIn: {userData.linkedin}
+        </div>
+        </div>
+        <div className="row">
+        <div className="col">
+          Tech Stack: 
+        </div>
+        <div className="col">
+          Personal Site/Portfolio:{userData.personalpage}
+        </div>
+        </div>
     </Container>
   );
 }

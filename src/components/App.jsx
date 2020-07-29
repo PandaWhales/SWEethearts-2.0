@@ -34,7 +34,7 @@ const App = () => {
       {/* Using Fragment rather than native div to avoid React warnings */}
       <>
         {/* Navigation Bar is ever-present */}
-        <NavigateBar authStatus={authStatus} />
+        <NavigateBar authStatus={authStatus} setAuthStatus={setAuthStatus}/>
         {/* Use the first Route whose path matches current URL */}
         <Switch>
           {/* Render given component if given path matches current URL */}
