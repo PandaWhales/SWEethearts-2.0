@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-node_modules
-=======
->>>>>>> 52fb234c8176655c6e7ca322de21b09bf7fb84f7
 .cache/
 coverage/
 dist/
