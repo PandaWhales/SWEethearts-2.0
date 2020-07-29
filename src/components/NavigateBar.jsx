@@ -19,7 +19,7 @@ const NavigateBar = ({ authStatus, setAuthStatus }) => {
 
   const logoutHandler = async () => {
     await axios.get('/api/logout');
-    window.location.reload(false);
+    window.location="/login";
   }
 
   return isLoggedIn ? (
