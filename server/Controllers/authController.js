@@ -94,8 +94,6 @@ authController.editProfile = async (req, res, next) => {
 
 authController.isLoggedIn = (req, res, next) => {
   if (req.user) {
-    console.log('req.user', req.user);
-    console.log('hit');
     res.locals.isLoggedIn = { isLoggedIn: true };
     res.locals.user = req.user.username;
     next();
