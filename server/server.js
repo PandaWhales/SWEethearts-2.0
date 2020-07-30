@@ -39,6 +39,13 @@ app.use('/api/signup', signUpRouter);
 app.use('/api/explore', exploreRouter);
 app.use('/api/submit', submitRouter);
 app.use('/api/profile', profileRouter);
+app.get('/api/loginstatus', authController.isLoggedIn, (req, res) => {
+  res.json([res.locals.isLoggedIn, res.locals.user]);
+});
+app.get('/api/logout', (req, res) => {
+  req.logout();
+  res.sendStatus(200);
+});
 
 // globoal error handler
 app.use((err, req, res, next) => {

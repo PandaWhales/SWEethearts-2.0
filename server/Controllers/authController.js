@@ -4,13 +4,13 @@ const model = require('../Models/model.js');
 const authController = {};
 
 authController.register = async (req, res, next) => {
-  const { username, password, email, firstname, lastname } = req.body;
+  const { username, password, email, firstname, lastname, linkedin, githubhandle, personalpage, about} = req.body;
   const queryText = `INSERT INTO User_credentials (username,password,email) VALUES ($1,$2,$3)`;
-  const usersQueryText = `INSERT INTO Users (username, firstname, lastname) VALUES($1,$2,$3)`;
+  const usersQueryText = `INSERT INTO Users (username, firstname, lastname, linkedin, githubhandle, personalpage, about) VALUES($1,$2,$3,$4,$5,$6,$7)`;
   const hashedPassWord = await bcrypt.hash(password, 10);
   try {
     await model.query(queryText, [username, hashedPassWord, email]);
-    await model.query(usersQueryText, [username, firstname, lastname]);
+    await model.query(usersQueryText, [username, firstname, lastname, linkedin, githubhandle, personalpage, about]);
     return next();
   } catch (err) {
     console.log(err);
@@ -33,6 +33,7 @@ authController.getProfile = async (req, res, next) => {
   try {
     const userData = await model.query(queryText, [username]);
     [res.locals.userData] = userData.rows;
+    console.log('USER DATA',res.locals.userData)
     return next();
   } catch (err) {
     console.log(err);
@@ -46,40 +47,34 @@ authController.getProfile = async (req, res, next) => {
 
 // middeware to edit profiles (INCOMPLETE)
 authController.editProfile = async (req, res, next) => {
+  console.log('entering edit controller')
   const {
     username,
-    firstName,
-    lastName,
+    firstname,
+    lastname,
+    linkedin,
+    githubhandle,
+    personalpage,
     about,
-    profilepic,
-    githubHandle,
-    linkedIn,
-    personalPage,
   } = req.body;
 
-  const queryText = `UPDATE Users
-	SET  firstname=$1,
-			 lastname=$2,
-			 about=$3
-			 profilepic=$4,
-			 githubhandle=$5,
-			 linkedin=$6,
-			 personalpage=$7
-	WHERE username=$8`;
+  console.log('linkedIn', linkedin)
+  const queryText = `UPDATE users SET linkedin= $1, githubhandle=$2, personalpage=$3, about=$4 WHERE username = $5`;
+  ;
 
   const queryValue = [
-    firstName,
-    lastName,
+    linkedin,
+    githubhandle,
+    personalpage,
     about,
-    profilepic,
-    githubHandle,
-    linkedIn,
-    personalPage,
-    username,
+    req.params.username,
   ];
+  console.log('queryVal', queryValue)
 
   try {
-    await model.query(queryText, queryValue);
+    const userData = await model.query(queryText, queryValue);
+    res.locals.userData = userData.rows
+    console.log('model query', userData)
     return next();
   } catch (err) {
     console.log(err);
@@ -91,4 +86,14 @@ authController.editProfile = async (req, res, next) => {
   }
 };
 
+authController.isLoggedIn = (req, res, next) => {
+  if (req.user) {
+    res.locals.isLoggedIn = { isLoggedIn: true };
+    res.locals.user = req.user.username;
+    next();
+  } else {
+    res.locals.isLoggedIn = { isLoggedIn: false };
+    next();
+  }
+};
 module.exports = authController;
