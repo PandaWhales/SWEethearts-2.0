@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import '../styles/login-signup.scss';
 import '../../node_modules/bootstrap/dist/css/bootstrap.css';
 import { Form, Button } from 'react-bootstrap';
+import axios from 'axios';
 
 const Login = (props) => {
   const { authStatus, setAuthStatus } = props;
@@ -71,6 +72,9 @@ const Login = (props) => {
             Sorry, your username/password was invalid.
           </div>
         </Form>
+        <Button variant="primary" type="link" href="/api/auth/github">
+          Log In with GitHub
+        </Button>
       </div>
     </div>
   );

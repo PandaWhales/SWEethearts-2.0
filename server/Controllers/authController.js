@@ -51,6 +51,7 @@ authController.getProfile = async (req, res, next) => {
   try {
     const userData = await model.query(queryText, [username]);
     [res.locals.userData] = userData.rows;
+    console.log('USER DATA', res.locals.userData);
     return next();
   } catch (err) {
     console.log(err);
@@ -113,6 +114,10 @@ authController.isLoggedIn = (req, res, next) => {
   if (req.user) {
     res.locals.isLoggedIn = { isLoggedIn: true };
     res.locals.user = req.user;
+
+    // req.user.username populated for localStorage, req.user populated for github auth
+    // res.locals.user = req.user.username ? req.user.username : req.user;
+    console.log('req.user', req.user);
     next();
   } else {
     res.locals.isLoggedIn = { isLoggedIn: false };

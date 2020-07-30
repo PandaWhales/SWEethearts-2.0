@@ -1,8 +1,8 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect } from 'react';
 import { Container, Col, Row, Button } from 'react-bootstrap';
 import Spinner from './Spinner';
 import '../styles/user-profile.scss';
-import axios from 'axios'
+import axios from 'axios';
 
 const Profile = (props) => {
   /*
@@ -11,8 +11,8 @@ const Profile = (props) => {
    * authStatus always passed in from App
    */
   let { ideaCreator, authStatus } = props;
-console.log('auth',authStatus)
-// console.log('REG STATUS', registrationInputs)
+  console.log('auth', authStatus);
+  // console.log('REG STATUS', registrationInputs)
   // Destructure currently authenticated user's username from authStatus
   // let { firstname,
   //   lastname,
@@ -29,8 +29,8 @@ console.log('auth',authStatus)
   // console.log('LINKED', linkedin)
   // Accessing Profile from Idea Page?
   if (ideaCreator) {
-    console.log('idea creator is : ', ideaCreator)
-    // If logged-in user is _not_ clicking on their own profile picture, 
+    console.log('idea creator is : ', ideaCreator);
+    // If logged-in user is _not_ clicking on their own profile picture,
     // RESET name-to-display to that of the User being clicked by logged-in User
     if (loggedInUsername !== ideaCreator) {
       creatorName = ideaCreator;
@@ -41,8 +41,6 @@ console.log('auth',authStatus)
     firstname: '',
     lastname: '',
     username: '',
-    password: '',
-    confirmPassword: '',
     email: '',
     linkedin: '',
     githubhandle: '',
@@ -54,20 +52,22 @@ console.log('auth',authStatus)
   useEffect(() => {
     const getUser = async () => {
       // Get all existing user data, sending username as a parameter
-      console.log('creator name', creatorName)
+      console.log('creator name', creatorName);
       const res = await axios.get(`/api/profile/${creatorName}`);
-      console.log('resssssssssssssssssssssssssssssssssss', res.data)
+      console.log('resssssssssssssssssssssssssssssssssss', res.data);
       // Expect in response an object with all User table column properties
       // const userTableData = await res.json();
       // setUserData(userTableData);
-      const {firstname,
+      const {
+        firstname,
         lastname,
         username,
         email,
         linkedin,
         githubhandle,
         personalpage,
-        about} = res.data
+        about,
+      } = res.data;
 
       setUserData({
         firstname: firstname,
@@ -78,11 +78,10 @@ console.log('auth',authStatus)
         githubhandle: githubhandle,
         personalpage: personalpage,
         about: about,
-      })
+      });
     };
     getUser();
   }, []);
-
 
   /* 
    * PROFILE COMPONENT USER FLOW:
@@ -100,53 +99,43 @@ console.log('auth',authStatus)
 
   if (!Object.keys(userData).length) {
     return <Spinner />;
-  }
-  else if (userData.err) {
+  } else if (userData.err) {
     return <Container>Could not load user</Container>;
   }
 
   return (
-    <Container id='userProfileContainer'>
-      <Row className='mb-4' id='row1'>
-        <h3>
-          {creatorName}'s Developer Profile
-        </h3>
-        <img id='profilePic' src='https://www.clker.com/cliparts/Z/j/o/Z/g/T/turquoise-anonymous-man-hi.png' />
+    <Container id="userProfileContainer">
+      <Row className="mb-4" id="row1">
+        <h3>{creatorName}'s Developer Profile</h3>
+        <img
+          id="profilePic"
+          src="https://www.clker.com/cliparts/Z/j/o/Z/g/T/turquoise-anonymous-man-hi.png"
+        />
       </Row>
-      <Row id='row2'>
-        <Col className='cardHeader' id='bioCard'>
+      <Row id="row2">
+        <Col className="cardHeader" id="bioCard">
           <Fragment>Bio</Fragment>
         </Col>
-        <Col className='cardHeader ml-5' id='contactInfoCard'>
+        <Col className="cardHeader ml-5" id="contactInfoCard">
           <Fragment>Where else can your future teammates contact you?</Fragment>
         </Col>
       </Row>
       <div className="row">
-        <div className="col">
-          Full Name: {userData.username}
-        </div>
-        <div className="col">
-          Github: {userData.githubhandle}
-        </div>
-        </div>
-        <div className="row">
-        <div className="col">
-          About: {userData.about}
-        </div>
-        <div className="col">
-          LinkedIn: {userData.linkedin}
-        </div>
-        </div>
-        <div className="row">
-        <div className="col">
-          Tech Stack: 
-        </div>
+        <div className="col">Full Name: {userData.username}</div>
+        <div className="col">Github: {userData.githubhandle}</div>
+      </div>
+      <div className="row">
+        <div className="col">About: {userData.about}</div>
+        <div className="col">LinkedIn: {userData.linkedin}</div>
+      </div>
+      <div className="row">
+        <div className="col">Tech Stack:</div>
         <div className="col">
           Personal Site/Portfolio:{userData.personalpage}
         </div>
-        </div>
+      </div>
     </Container>
   );
-}
+};
 
 export default Profile;
