@@ -3,7 +3,7 @@ import { Container, Col, Row, Button, Form } from 'react-bootstrap';
 import Spinner from './Spinner';
 import '../styles/user-profile.scss';
 import axios from 'axios';
-import EditProfile from './EditProfile';
+
 import Popup from "reactjs-popup";
 
 const Profile = (props) => {
@@ -60,7 +60,7 @@ console.log('auth',authStatus)
   const handleEditFormSubmit = (e) => {
     e.preventDefault();
 
-    const {linkedin, githubhandle, personalpage, about} = userData
+    const {linkedin, githubhandle, personalpage, about} = registrationInputs
 
     const body = {linkedin, githubhandle, personalpage, about}
 
@@ -82,10 +82,14 @@ console.log('auth',authStatus)
   }
 
   const setInput = (e) => {
-        setUserData({
-        ...userData,
-        [e.target.id]: e.target.value,
-      });
+      //   setUserData({
+      //   ...userData,
+      //   [e.target.id]: e.target.value,
+      // });
+        setRegistrationInputs({
+          ...registrationInputs,
+          [e.target.id]: e.target.value,
+        });
     };
 
 
@@ -106,7 +110,7 @@ console.log('auth',authStatus)
         personalpage,
         about} = res.data
 
-      setUserData({
+      setRegistrationInputs({
         firstname: firstname,
         lastname: lastname,
         username: username,
@@ -159,18 +163,18 @@ console.log('auth',authStatus)
       </Row>
       <div className="row">
         <div className="col">
-          Full Name: {userData.username}
+          Full Name: {registrationInputs.username}
         </div>
         <div className="col">
-          Github: {userData.githubhandle}
+          Github: {registrationInputs.githubhandle}
         </div>
         </div>
         <div className="row">
         <div className="col">
-          About: {userData.about}
+          About: {registrationInputs.about}
         </div>
         <div className="col">
-          LinkedIn: {userData.linkedin}
+          LinkedIn: {registrationInputs.linkedin}
         </div>
         </div>
         <div className="row">
@@ -178,7 +182,7 @@ console.log('auth',authStatus)
           Tech Stack: 
         </div>
         <div className="col">
-          Personal Site/Portfolio:{userData.personalpage}
+          Personal Site/Portfolio:{registrationInputs.personalpage}
         </div>
         </div>
 
@@ -191,6 +195,7 @@ console.log('auth',authStatus)
                 <Form.Control
                 type="linkedin"
                 placeholder="LinkedIn URL"
+                value={registrationInputs.linkedin}
                 onChange={setInput}
                 />
               </Form.Group>
@@ -200,6 +205,7 @@ console.log('auth',authStatus)
                 <Form.Control
                 type="githubhandle"
                 placeholder="gitHubHandle URL"
+                value={registrationInputs.githubhandle}
                 onChange={setInput}
                 />
               </Form.Group>
@@ -209,6 +215,7 @@ console.log('auth',authStatus)
             <Form.Control
               type="personalpage"
               placeholder="Personal Page URL"
+              value={registrationInputs.personalpage}
               onChange={setInput}
             />
           </Form.Group>
@@ -218,6 +225,7 @@ console.log('auth',authStatus)
             <Form.Control
               type="about"
               placeholder="About you"
+              value={registrationInputs.about}
               onChange={setInput}
             />
           </Form.Group>
@@ -228,6 +236,7 @@ console.log('auth',authStatus)
              </Form>
            </div>
         </Popup>
+        
          {/* <button onClick={handleformsubmit}> 
           <EditProfile />
           // we fill out the form
