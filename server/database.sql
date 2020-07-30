@@ -2,7 +2,7 @@ CREATE TABLE public.User_credentials
 (
   username varchar(50) NOT NULL,
   password varchar(255) NOT NULL,
-  email varchar(255) UNIQUE NOT NULL,
+  email varchar(255) UNIQUE,
   CONSTRAINT PK_users PRIMARY KEY (username)
 );
 
