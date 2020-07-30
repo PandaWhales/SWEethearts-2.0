@@ -1,10 +1,8 @@
 import React, { Fragment, useState, useEffect } from 'react'
-import { Container, Col, Row, Button, Form } from 'react-bootstrap';
+import { Container, Col, Row, Button } from 'react-bootstrap';
 import Spinner from './Spinner';
 import '../styles/user-profile.scss';
-import axios from 'axios';
-
-import Popup from "reactjs-popup";
+import axios from 'axios'
 
 const Profile = (props) => {
   /*
@@ -14,25 +12,21 @@ const Profile = (props) => {
    */
   let { ideaCreator, authStatus } = props;
 console.log('auth',authStatus)
+// console.log('REG STATUS', registrationInputs)
+  // Destructure currently authenticated user's username from authStatus
+  // let { firstname,
+  //   lastname,
+  //   email,
+  //   linkedin,
+  //   githubhandle,
+  //   personalpage,
+  //   about, } = registrationInputs;
 
   let { username } = authStatus;
   // Initialize creator name-to-display to currently authenticated user
   let creatorName = username;
- 
-  const [registrationInputs, setRegistrationInputs] = useState({
-    firstname: '',
-    lastname: '',
-    username: '',
-    password: '',
-    confirmPassword: '',
-    email: '',
-    linkedin: '',
-    githubhandle: '',
-    personalpage: '',
-    about: '',
-    userTechStack: [],
-  });
-
+  // console.log('USERNAME', username)
+  // console.log('LINKED', linkedin)
   // Accessing Profile from Idea Page?
   if (ideaCreator) {
     console.log('idea creator is : ', ideaCreator)
@@ -56,48 +50,13 @@ console.log('auth',authStatus)
     about: '',
   });
 
-  
-  const handleEditFormSubmit = (e) => {
-    e.preventDefault();
-
-    const {linkedin, githubhandle, personalpage, about} = registrationInputs
-
-    const body = {linkedin, githubhandle, personalpage, about}
-
-    fetch(`/api/profile/${creatorName}`, {
-      method: 'PUT', // or 'PUT'
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-    window.location="/profile";
-  }
-
-  const setInput = (e) => {
-      //   setUserData({
-      //   ...userData,
-      //   [e.target.id]: e.target.value,
-      // });
-        setRegistrationInputs({
-          ...registrationInputs,
-          [e.target.id]: e.target.value,
-        });
-    };
-
-
   // componentDidMount() functional equivalent
   useEffect(() => {
     const getUser = async () => {
       // Get all existing user data, sending username as a parameter
+      console.log('creator name', creatorName)
       const res = await axios.get(`/api/profile/${creatorName}`);
+      console.log('resssssssssssssssssssssssssssssssssss', res.data)
       // Expect in response an object with all User table column properties
       // const userTableData = await res.json();
       // setUserData(userTableData);
@@ -110,7 +69,7 @@ console.log('auth',authStatus)
         personalpage,
         about} = res.data
 
-      setRegistrationInputs({
+      setUserData({
         firstname: firstname,
         lastname: lastname,
         username: username,
@@ -123,6 +82,7 @@ console.log('auth',authStatus)
     };
     getUser();
   }, []);
+
 
   /* 
    * PROFILE COMPONENT USER FLOW:
@@ -163,18 +123,18 @@ console.log('auth',authStatus)
       </Row>
       <div className="row">
         <div className="col">
-          Full Name: {registrationInputs.username}
+          Full Name: {userData.username}
         </div>
         <div className="col">
-          Github: {registrationInputs.githubhandle}
+          Github: {userData.githubhandle}
         </div>
         </div>
         <div className="row">
         <div className="col">
-          About: {registrationInputs.about}
+          About: {userData.about}
         </div>
         <div className="col">
-          LinkedIn: {registrationInputs.linkedin}
+          LinkedIn: {userData.linkedin}
         </div>
         </div>
         <div className="row">
@@ -182,78 +142,11 @@ console.log('auth',authStatus)
           Tech Stack: 
         </div>
         <div className="col">
-          Personal Site/Portfolio:{registrationInputs.personalpage}
+          Personal Site/Portfolio:{userData.personalpage}
         </div>
         </div>
-
-
-        <Popup trigger={<button> Trigger</button>} position="right center">
-           <div>
-             <Form onSubmit={handleEditFormSubmit}>
-              <Form.Group controlId="linkedin">
-                <Form.Label>LinkedIn</Form.Label>
-                <Form.Control
-                type="linkedin"
-                placeholder="LinkedIn URL"
-                value={registrationInputs.linkedin}
-                onChange={setInput}
-                />
-              </Form.Group>
-
-              <Form.Group controlId="githubhandle">
-                <Form.Label>GitHub</Form.Label>
-                <Form.Control
-                type="githubhandle"
-                placeholder="gitHubHandle URL"
-                value={registrationInputs.githubhandle}
-                onChange={setInput}
-                />
-              </Form.Group>
-
-          <Form.Group controlId="personalpage">
-            <Form.Label>Personal Page</Form.Label>
-            <Form.Control
-              type="personalpage"
-              placeholder="Personal Page URL"
-              value={registrationInputs.personalpage}
-              onChange={setInput}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="about">
-            <Form.Label>About</Form.Label>
-            <Form.Control
-              type="about"
-              placeholder="About you"
-              value={registrationInputs.about}
-              onChange={setInput}
-            />
-          </Form.Group>
-
-          <Button variant="primary" type="submit" >
-            Submit
-          </Button>
-             </Form>
-           </div>
-        </Popup>
-        
-         {/* <button onClick={handleformsubmit}> 
-          <EditProfile />
-          // we fill out the form
-          // hit submit and do a post request to database
-          // .then window.location profile page to automatically do get request
-        </button>  */}
-
-
-
     </Container>
   );
 }
-
-// export default () => (
-//   <Popup trigger={<button> Trigger</button>} position="right center">
-//     <div>Popup content here !!</div>
-//   </Popup>
-// );
 
 export default Profile;
