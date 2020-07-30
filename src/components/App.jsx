@@ -1,4 +1,5 @@
-import React, { Fragment, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Landing from './Landing.jsx';
 import Explore from './Explore.jsx';
 import Login from './Login.jsx';
@@ -16,12 +17,24 @@ const App = () => {
     username: '',
   });
 
+  useEffect(() => {
+    const fetchLoggedInUser = async () => {
+      const loggedInStatus = await axios.get('/api/loginstatus');
+      console.log('loggedInStatus', loggedInStatus);
+      setAuthStatus({
+        isLoggedIn: loggedInStatus.data[0].isLoggedIn,
+        username: loggedInStatus.data[1],
+      });
+    };
+    fetchLoggedInUser();
+  }, []);
+
   return (
     <Router>
       {/* Using Fragment rather than native div to avoid React warnings */}
-      <Fragment>
+      <>
         {/* Navigation Bar is ever-present */}
-        <NavigateBar authStatus={authStatus} setAuthStatus={setAuthStatus}/>
+        <NavigateBar authStatus={authStatus} setAuthStatus={setAuthStatus} />
         {/* Use the first Route whose path matches current URL */}
         <Switch>
           {/* Render given component if given path matches current URL */}
@@ -62,7 +75,7 @@ const App = () => {
             render={() => <Profile authStatus={authStatus} />}
           />
         </Switch>
-      </Fragment>
+      </>
     </Router>
   );
 };

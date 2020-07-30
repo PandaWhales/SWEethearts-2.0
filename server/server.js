@@ -11,6 +11,7 @@ const exploreRouter = require('./Routers/exploreRouter');
 const submitRouter = require('./Routers/submitRouter');
 const loginRouter = require('./Routers/loginRouter');
 const profileRouter = require('./Routers/profileRouter');
+const authController = require('./Controllers/authController');
 const flash = require('express-flash');
 const initializePassport = require('./passport');
 const passport = require('passport');
