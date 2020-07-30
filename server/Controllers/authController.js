@@ -49,33 +49,22 @@ authController.getProfile = async (req, res, next) => {
 authController.editProfile = async (req, res, next) => {
   const {
     username,
-    firstName,
-    lastName,
+    firstname,
+    lastname,
+    linkedin,
+    githubhandle,
+    personalpage,
     about,
-    profilepic,
-    githubHandle,
-    linkedIn,
-    personalPage,
   } = req.body;
 
-  const queryText = `UPDATE Users
-	SET  firstname=$1,
-			 lastname=$2,
-			 about=$3
-			 profilepic=$4,
-			 githubhandle=$5,
-			 linkedin=$6,
-			 personalpage=$7
-	WHERE username=$8`;
+  const queryText = `UPDATE users SET linkedin= $1, githubhandle=$2, personalpage=$3, about=$4 WHERE username = $5`;
+  ;
 
   const queryValue = [
-    firstName,
-    lastName,
+    linkedin,
+    githubhandle,
+    personalpage,
     about,
-    profilepic,
-    githubHandle,
-    linkedIn,
-    personalPage,
     username,
   ];
 

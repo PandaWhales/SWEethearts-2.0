@@ -10,4 +10,8 @@ router.get('/:username', authController.getProfile, (req, res) => {
   res.json(res.locals.userData);
 });
 
+router.put('/:username', authController.editProfile, (req, res) => {
+  res.json(res.locals.users)
+}) 
+
 module.exports = router;
