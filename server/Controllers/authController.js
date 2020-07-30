@@ -47,34 +47,40 @@ authController.getProfile = async (req, res, next) => {
 
 // middeware to edit profiles (INCOMPLETE)
 authController.editProfile = async (req, res, next) => {
-  console.log('entering edit controller')
   const {
     username,
-    firstname,
-    lastname,
-    linkedin,
-    githubhandle,
-    personalpage,
+    firstName,
+    lastName,
     about,
+    profilepic,
+    githubHandle,
+    linkedIn,
+    personalPage,
   } = req.body;
 
-  console.log('linkedIn', linkedin)
-  const queryText = `UPDATE users SET linkedin= $1, githubhandle=$2, personalpage=$3, about=$4 WHERE username = $5`;
-  ;
+  const queryText = `UPDATE Users
+	SET  firstname=$1,
+			 lastname=$2,
+			 about=$3
+			 profilepic=$4,
+			 githubhandle=$5,
+			 linkedin=$6,
+			 personalpage=$7
+	WHERE username=$8`;
 
   const queryValue = [
-    linkedin,
-    githubhandle,
-    personalpage,
+    firstName,
+    lastName,
     about,
-    req.params.username,
+    profilepic,
+    githubHandle,
+    linkedIn,
+    personalPage,
+    username,
   ];
-  console.log('queryVal', queryValue)
 
   try {
-    const userData = await model.query(queryText, queryValue);
-    res.locals.userData = userData.rows
-    console.log('model query', userData)
+    await model.query(queryText, queryValue);
     return next();
   } catch (err) {
     console.log(err);

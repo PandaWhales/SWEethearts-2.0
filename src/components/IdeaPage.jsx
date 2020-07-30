@@ -3,41 +3,16 @@ import { NavLink } from 'react-router-dom';
 import Spinner from './Spinner';
 import '../styles/ideapage.scss';
 import { Container, Col, Row, Button } from 'react-bootstrap';
-// import Axios from 'axios';
 
 const IdeaPage = (props) => {
   //passed in from Explore
   let { idea_id, authStatus } = props.location.state;
   const [ideaData, setIdeaData] = useState({});
   const [interested, setInterested] = useState(false);
-  // const [creatorInfo, setCreatorInfo] = useState({
-  //   firstname: '',
-  //   lastname: '',
-  //   username: '',
-  //   password: '',
-  //   confirmPassword: '',
-  //   email: '',
-  //   linkedin: '',
-  //   githubhandle: '',
-  //   personalpage: '',
-  //   about: '',
-  // })
 
   useEffect(() => {
     getIdea();
   }, []);
-
-  // const getCreatorInfo = async () => {
-  //   const result = await Axios.get(`/api/profile/${creator_username}`)
-  //   const {firstname,
-  //     lastname,
-  //     username,
-  //     email,
-  //     linkedin,
-  //     githubhandle,
-  //     personalpage,
-  //     about} = result.data
-  // }
 
   const getIdea = async () => {
     const res = await fetch(`/api/explore/${idea_id}`);
@@ -108,7 +83,7 @@ const IdeaPage = (props) => {
                 {/* TODO:CONVERT THE PROFILE PIC IN SCHEMA TO STRING */}
                 <NavLink
                   to={{
-                    pathname: `/profile/`,
+                    pathname: '/profile',
                     state: {
                       ideaCreator: creator_username,
                       authStatus

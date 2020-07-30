@@ -158,6 +158,7 @@ const Signup = (props) => {
               type="linkedin"
               placeholder="LinkedIn URL"
               onChange={setInput}
+              required
             />
           </Form.Group>
 
@@ -167,6 +168,7 @@ const Signup = (props) => {
               type="githubhandle"
               placeholder="gitHubHandle URL"
               onChange={setInput}
+              required
             />
           </Form.Group>
 
@@ -176,6 +178,7 @@ const Signup = (props) => {
               type="personalpage"
               placeholder="Personal Page URL"
               onChange={setInput}
+              required
             />
           </Form.Group>
 
@@ -185,6 +188,7 @@ const Signup = (props) => {
               type="about"
               placeholder="About you"
               onChange={setInput}
+              required
             />
           </Form.Group>
 
