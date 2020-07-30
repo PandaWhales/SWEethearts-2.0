@@ -2,7 +2,7 @@ CREATE TABLE public.User_credentials
 (
   username varchar(50) NOT NULL,
   password varchar(255) NOT NULL,
-  email varchar(255) UNIQUE NOT NULL,
+  email varchar(255) UNIQUE,
   CONSTRAINT PK_users PRIMARY KEY (username)
 );
 
@@ -14,7 +14,7 @@ CREATE TABLE Users
   about varchar(255) NULL,
   profilepic varchar(65535) NULL DEFAULT 'https://www.eguardtech.com/wp-content/uploads/2018/08/Network-Profile.png',
   githubhandle varchar(50) NULL,
-  username varchar(50) NOT NULL,
+  username varchar(50) UNIQUE NOT NULL,
   linkedin varchar(255) NULL,
   personalpage varchar(255) NULL,
   CONSTRAINT PK_user_profile PRIMARY KEY (user_id),
