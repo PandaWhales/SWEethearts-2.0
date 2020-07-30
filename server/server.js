@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 
 const app = express();
 const cookieParser = require('cookie-parser');
@@ -12,6 +13,9 @@ const submitRouter = require('./Routers/submitRouter');
 const loginRouter = require('./Routers/loginRouter');
 const profileRouter = require('./Routers/profileRouter');
 const authController = require('./Controllers/authController');
+
+// import Github strategy
+const GitHubStrategy = require('passport-github').Strategy;
 const flash = require('express-flash');
 const initializePassport = require('./passport');
 const passport = require('passport');
@@ -19,6 +23,11 @@ initializePassport(passport);
 require('dotenv').config();
 const PORT = 3000;
 
+const corsOptions = {
+  origin: true,
+  preflightContinue: true,
+  optionsSuccessStatus: 200,
+};
 /*
  * Handle parsing request body
  */
@@ -48,6 +57,71 @@ app.get('/api/logout', (req, res) => {
   res.sendStatus(200);
 });
 
+// Github OAuth handler
+// console.log(process.env.gitHubClientId, process.env.gitHubClientSecret);
+passport.use(
+  new GitHubStrategy(
+    {
+      clientID: process.env.gitHubClientId,
+      clientSecret: process.env.gitHubClientSecret,
+      callbackURL: 'http://localhost:8080/api/auth/github/callback',
+    },
+    (accessToken, refreshToken, profile, done) => {
+      done(null, profile);
+    }
+  )
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+app.get('/api/auth/github', (req, res) => {
+  const githubURL = `https://github.com/login/oauth/authorize?client_id=${process.env.gitHubClientId}&redirect_uri=http://localhost:8080/api/auth/github/callback`;
+  res.redirect(githubURL);
+});
+app.get(
+  '/api/auth/github/callback',
+  passport.authenticate('github', {
+    failureRedirect: 'http://localhost:8080/login',
+  }),
+  async (req, res, next) => {
+    console.log('req.user in callback', req.user);
+    const credQueryText = `INSERT INTO User_credentials (username, password) VALUES ($1, $2) ON CONFLICT DO NOTHING`;
+    const userQueryText =
+      'INSERT INTO Users (username, githubhandle, firstname, lastname) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING';
+
+    const firstname = req.user.displayName.split(' ')[0];
+    const lastname = req.user.displayName.split(' ')[1];
+    try {
+      // saves username as username, id as password, email
+      // email may need to be changed in the database to not required
+      // github has features to hid emails
+      await model.query(credQueryText, [req.user.username, req.user.id]);
+      await model.query(userQueryText, [
+        req.user.username,
+        req.user.username,
+        firstname,
+        lastname,
+      ]);
+      return next();
+    } catch (err) {
+      console.log(err);
+      return next({
+        log: `error occurred at github callback middleware. error message is: ${err}`,
+        status: 400,
+        message: { err: 'An error occurred' },
+      });
+    }
+  },
+  (req, res) => {
+    res.redirect('/explore');
+  }
+);
 // globoal error handler
 app.use((err, req, res, next) => {
   const defaultErr = {
