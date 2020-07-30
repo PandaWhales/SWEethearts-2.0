@@ -1,5 +1,7 @@
 const express = require('express');
 const path = require('path');
+//email api
+const sgMail = require('@sendgrid/mail');
 
 const app = express();
 const cookieParser = require('cookie-parser');
@@ -40,13 +42,43 @@ app.use('/api/signup', signUpRouter);
 app.use('/api/explore', exploreRouter);
 app.use('/api/submit', submitRouter);
 app.use('/api/profile', profileRouter);
+
+//sweethearts 2.0 routes
 app.get('/api/loginstatus', authController.isLoggedIn, (req, res) => {
   res.json([res.locals.isLoggedIn, res.locals.user]);
 });
+
 app.get('/api/logout', (req, res) => {
   req.logout();
   res.sendStatus(200);
 });
+
+//route for email api
+app.post('/api/sendEmail', sendEmail, (req, res) => {
+  res.status(200).json('hi');
+});
+
+//email api integration
+function sendEmail(req, res, next) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  const { email, message } = req.body;
+  const sub = req.body.subject;
+  const msg = {
+    to: email,
+    from: 'sweetheartsPandaWhale@gmail.com',
+    subject: sub,
+    text: message,
+    html: `<p>${message}</p>`,
+  };
+  // sgMail.send(msg, (error, result) => {
+  //   if (error) {
+  //     console.log(error.response.body.errors);
+  //   } else {
+  //     console.log(result);
+  //   }
+  // });
+  next();
+}
 
 // globoal error handler
 app.use((err, req, res, next) => {

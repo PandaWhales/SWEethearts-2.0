@@ -1,29 +1,26 @@
 import React from 'react';
-import {
-  Navbar,
-  Nav /* Form, FormControl, Button, Container */,
-} from 'react-bootstrap';
+import { Navbar, Nav /* Form, FormControl, Button, Container */ } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const NavigateBar = ({ authStatus, setAuthStatus }) => {
   const { isLoggedIn, username } = authStatus;
-    // const fetchLoggedInUser = async () => {
-    //   const loggedInStatus = await axios.get('/api/loginstatus');
-    //   console.log('loggedInStatus', loggedInStatus);
-    //   setAuthStatus({
-    //     isLoggedIn: loggedInStatus.data[0].isLoggedIn,
-    //     username: loggedInStatus.data[1],
-    //   });
-    // };
+  // const fetchLoggedInUser = async () => {
+  //   const loggedInStatus = await axios.get('/api/loginstatus');
+  //   console.log('loggedInStatus', loggedInStatus);
+  //   setAuthStatus({
+  //     isLoggedIn: loggedInStatus.data[0].isLoggedIn,
+  //     username: loggedInStatus.data[1],
+  //   });
+  // };
 
   const logoutHandler = async () => {
     await axios.get('/api/logout');
-    window.location="/login";
-  }
+    window.location = '/login';
+  };
 
   return isLoggedIn ? (
-    <Navbar bg="primary" variant="dark">
+    <Navbar bg="dark" variant="dark">
       {/* Leftside Nav Logo/Link */}
       {/* TODO: Point this href to `/explore` if User is authenticated */}
       <Link to="/">

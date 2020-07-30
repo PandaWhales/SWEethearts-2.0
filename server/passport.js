@@ -27,10 +27,10 @@ const initialize = () => {
               }
               // if password matched send user body
               if (isMatch) {
-                console.log('match');
+                // console.log('match');
                 done(null, user);
               } else {
-                console.log('password is not matched');
+                // console.log('password is not matched');
                 done(null, false, { message: 'password is not matched' });
               }
             });

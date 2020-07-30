@@ -4,13 +4,31 @@ const model = require('../Models/model.js');
 const authController = {};
 
 authController.register = async (req, res, next) => {
-  const { username, password, email, firstname, lastname, linkedin, githubhandle, personalpage, about} = req.body;
+  const {
+    username,
+    password,
+    email,
+    firstname,
+    lastname,
+    linkedin,
+    githubhandle,
+    personalpage,
+    about,
+  } = req.body;
   const queryText = `INSERT INTO User_credentials (username,password,email) VALUES ($1,$2,$3)`;
   const usersQueryText = `INSERT INTO Users (username, firstname, lastname, linkedin, githubhandle, personalpage, about) VALUES($1,$2,$3,$4,$5,$6,$7)`;
   const hashedPassWord = await bcrypt.hash(password, 10);
   try {
     await model.query(queryText, [username, hashedPassWord, email]);
-    await model.query(usersQueryText, [username, firstname, lastname, linkedin, githubhandle, personalpage, about]);
+    await model.query(usersQueryText, [
+      username,
+      firstname,
+      lastname,
+      linkedin,
+      githubhandle,
+      personalpage,
+      about,
+    ]);
     return next();
   } catch (err) {
     console.log(err);
@@ -33,7 +51,6 @@ authController.getProfile = async (req, res, next) => {
   try {
     const userData = await model.query(queryText, [username]);
     [res.locals.userData] = userData.rows;
-    console.log('USER DATA',res.locals.userData)
     return next();
   } catch (err) {
     console.log(err);
@@ -95,7 +112,7 @@ authController.editProfile = async (req, res, next) => {
 authController.isLoggedIn = (req, res, next) => {
   if (req.user) {
     res.locals.isLoggedIn = { isLoggedIn: true };
-    res.locals.user = req.user.username;
+    res.locals.user = req.user;
     next();
   } else {
     res.locals.isLoggedIn = { isLoggedIn: false };
