@@ -13,16 +13,14 @@ const Profile = (props) => {
    * authStatus always passed in from App
    */
   let { ideaCreator, authStatus } = props;
-console.log('auth',authStatus)
+  console.log('auth',authStatus)
 
   let { username } = authStatus;
-  // Initialize creator name-to-display to currently authenticated user
-  let creatorName = username;
  
   const [registrationInputs, setRegistrationInputs] = useState({
     firstname: '',
     lastname: '',
-    username: '',
+    username: authStatus.username,
     password: '',
     confirmPassword: '',
     email: '',
@@ -33,20 +31,11 @@ console.log('auth',authStatus)
     userTechStack: [],
   });
 
-  // Accessing Profile from Idea Page?
-  if (ideaCreator) {
-    console.log('idea creator is : ', ideaCreator)
-    // If logged-in user is _not_ clicking on their own profile picture, 
-    // RESET name-to-display to that of the User being clicked by logged-in User
-    if (loggedInUsername !== ideaCreator) {
-      creatorName = ideaCreator;
-    }
-  }
   // Set up user data to display on Profile
   const [userData, setUserData] = useState({
     firstname: '',
     lastname: '',
-    username: '',
+    username: authStatus.username,
     password: '',
     confirmPassword: '',
     email: '',
@@ -57,14 +46,14 @@ console.log('auth',authStatus)
   });
 
   
-  const handleEditFormSubmit = (e) => {
+  const handleEditFormSubmit = async (e) => {
     e.preventDefault();
 
     const {linkedin, githubhandle, personalpage, about} = registrationInputs
 
     const body = {linkedin, githubhandle, personalpage, about}
 
-    fetch(`/api/profile/${creatorName}`, {
+    await fetch(`/api/profile/${authStatus.username}`, {
       method: 'PUT', // or 'PUT'
       headers: {
         'Content-Type': 'application/json',
@@ -73,12 +62,34 @@ console.log('auth',authStatus)
     })
     .then(response => response.json())
     .then(data => {
+      const { firstname,
+        lastname,
+        username,
+        email,
+        linkedin,
+        githubhandle,
+        personalpage,
+        about } = data
+      
+      setRegistrationInputs({
+        ...registrationInputs,
+        firstname: firstname,
+        lastname: lastname,
+        username: username,
+        email: email,
+        linkedin: linkedin,
+        githubhandle: githubhandle,
+        personalpage: personalpage,
+        about: about,
+      });
+
       console.log('Success:', data);
     })
     .catch((error) => {
       console.error('Error:', error);
     });
-    window.location="/profile";
+    // window.location="/profile";
+    console.log('refresh here')
   }
 
   const setInput = (e) => {
@@ -97,7 +108,9 @@ console.log('auth',authStatus)
   useEffect(() => {
     const getUser = async () => {
       // Get all existing user data, sending username as a parameter
-      const res = await axios.get(`/api/profile/${creatorName}`);
+      console.log('username', authStatus.username);
+      console.log('loggedin', authStatus.isLoggedIn);
+      const res = await axios.get(`/api/profile/${authStatus.username}`);
       // Expect in response an object with all User table column properties
       // const userTableData = await res.json();
       // setUserData(userTableData);
@@ -108,18 +121,19 @@ console.log('auth',authStatus)
         linkedin,
         githubhandle,
         personalpage,
-        about} = res.data
+        about} = res.data;
 
+        console.log('dattaaaa', res.data)
       setRegistrationInputs({
         firstname: firstname,
         lastname: lastname,
         username: username,
-        email: email,
         linkedin: linkedin,
         githubhandle: githubhandle,
         personalpage: personalpage,
         about: about,
-      })
+      });
+      console.log('reginputs', registrationInputs)
     };
     getUser();
   }, []);
@@ -149,7 +163,7 @@ console.log('auth',authStatus)
     <Container id='userProfileContainer'>
       <Row className='mb-4' id='row1'>
         <h3>
-          {creatorName}'s Developer Profile
+          {authStatus.username}'s Developer Profile
         </h3>
         <img id='profilePic' src='https://www.clker.com/cliparts/Z/j/o/Z/g/T/turquoise-anonymous-man-hi.png' />
       </Row>

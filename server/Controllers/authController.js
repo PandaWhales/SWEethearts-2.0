@@ -59,7 +59,7 @@ authController.editProfile = async (req, res, next) => {
   } = req.body;
 
   console.log('linkedIn', linkedin)
-  const queryText = `UPDATE users SET linkedin= $1, githubhandle=$2, personalpage=$3, about=$4 WHERE username = $5`;
+  const queryText = `UPDATE users SET linkedin= $1, githubhandle=$2, personalpage=$3, about=$4 WHERE username = $5 RETURNING *`;
   ;
 
   const queryValue = [
@@ -73,7 +73,7 @@ authController.editProfile = async (req, res, next) => {
 
   try {
     const userData = await model.query(queryText, queryValue);
-    res.locals.userData = userData.rows
+    res.locals.userData = userData.rows[0]
     console.log('model query', userData)
     return next();
   } catch (err) {
