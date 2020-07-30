@@ -79,13 +79,13 @@ function sendEmail(req, res, next) {
     text: message,
     html: `<p>${message}</p>`,
   };
-  // sgMail.send(msg, (error, result) => {
-  //   if (error) {
-  //     console.log(error.response.body.errors);
-  //   } else {
-  //     console.log(result);
-  //   }
-  // });
+  sgMail.send(msg, (error, result) => {
+    if (error) {
+      console.log(error.response.body.errors);
+    } else {
+      console.log(result);
+    }
+  });
   next();
 }
 
