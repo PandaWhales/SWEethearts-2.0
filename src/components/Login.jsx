@@ -42,11 +42,6 @@ const Login = (props) => {
     setLoginInputs({ ...loginInputs, [e.target.id]: e.target.value });
   };
 
-  const handleGitHubSubmit = () => {
-    console.log('clicked!');
-    axios.get('/api/auth/github');
-  };
-
   return loginStatus || authStatus.isLoggedIn ? (
     <Redirect to={{ pathname: '/explore' }} />
   ) : (
@@ -81,7 +76,7 @@ const Login = (props) => {
             Sorry, your username/password was invalid.
           </div>
         </Form>
-        <Button variant="primary" type="submit" onClick={handleGitHubSubmit}>
+        <Button variant="primary" type="link" href="/api/auth/github">
           Log In with GitHub
         </Button>
       </div>
