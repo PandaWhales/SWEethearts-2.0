@@ -19,7 +19,6 @@ const GitHubStrategy = require('passport-github').Strategy;
 const flash = require('express-flash');
 const initializePassport = require('./passport');
 const passport = require('passport');
-const { getTokenSourceMapRange } = require('typescript');
 initializePassport(passport);
 require('dotenv').config();
 const PORT = 3000;
@@ -90,8 +89,36 @@ app.get(
   passport.authenticate('github', {
     failureRedirect: 'http://localhost:8080/login',
   }),
+  async (req, res, next) => {
+    console.log('req.user in callback', req.user);
+    const credQueryText = `INSERT INTO User_credentials (username, password) VALUES ($1, $2) ON CONFLICT DO NOTHING`;
+    const userQueryText =
+      'INSERT INTO Users (username, githubhandle, firstname, lastname) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING';
+
+    const firstname = req.user.displayName.split(' ')[0];
+    const lastname = req.user.displayName.split(' ')[1];
+    try {
+      // saves username as username, id as password, email
+      // email may need to be changed in the database to not required
+      // github has features to hid emails
+      await model.query(credQueryText, [req.user.username, req.user.id]);
+      await model.query(userQueryText, [
+        req.user.username,
+        req.user.username,
+        firstname,
+        lastname,
+      ]);
+      return next();
+    } catch (err) {
+      console.log(err);
+      return next({
+        log: `error occurred at github callback middleware. error message is: ${err}`,
+        status: 400,
+        message: { err: 'An error occurred' },
+      });
+    }
+  },
   (req, res) => {
-    console.log('req.user', req.user);
     res.redirect('/explore');
   }
 );
