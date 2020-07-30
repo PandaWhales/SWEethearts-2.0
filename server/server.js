@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 
 const app = express();
 const cookieParser = require('cookie-parser');
@@ -12,13 +13,22 @@ const submitRouter = require('./Routers/submitRouter');
 const loginRouter = require('./Routers/loginRouter');
 const profileRouter = require('./Routers/profileRouter');
 const authController = require('./Controllers/authController');
+
+// import Github strategy
+const GitHubStrategy = require('passport-github').Strategy;
 const flash = require('express-flash');
 const initializePassport = require('./passport');
 const passport = require('passport');
+const { getTokenSourceMapRange } = require('typescript');
 initializePassport(passport);
 require('dotenv').config();
 const PORT = 3000;
 
+const corsOptions = {
+  origin: true,
+  preflightContinue: true,
+  optionsSuccessStatus: 200,
+};
 /*
  * Handle parsing request body
  */
@@ -48,6 +58,43 @@ app.get('/api/logout', (req, res) => {
   res.sendStatus(200);
 });
 
+// Github OAuth handler
+// console.log(process.env.gitHubClientId, process.env.gitHubClientSecret);
+passport.use(
+  new GitHubStrategy(
+    {
+      clientID: process.env.gitHubClientId,
+      clientSecret: process.env.gitHubClientSecret,
+      callbackURL: 'http://localhost:8080/api/auth/github/callback',
+    },
+    (accessToken, refreshToken, profile, done) => {
+      done(null, profile);
+    }
+  )
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+app.get('/api/auth/github', (req, res) => {
+  const githubURL = `https://github.com/login/oauth/authorize?client_id=${process.env.gitHubClientId}&redirect_uri=http://localhost:8080/api/auth/github/callback`;
+  res.redirect(githubURL);
+});
+app.get(
+  '/api/auth/github/callback',
+  passport.authenticate('github', {
+    failureRedirect: 'http://localhost:8080/login',
+  }),
+  (req, res) => {
+    console.log('req.user', req.user);
+    res.redirect('/explore');
+  }
+);
 // globoal error handler
 app.use((err, req, res, next) => {
   const defaultErr = {
