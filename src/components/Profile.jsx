@@ -14,7 +14,7 @@ const Profile = (props) => {
    */
   let { ideaCreator, authStatus } = props;
   console.log('auth', authStatus)
-
+ 
   let { username } = authStatus;
 
   const [registrationInputs, setRegistrationInputs] = useState({
@@ -32,19 +32,6 @@ const Profile = (props) => {
   });
 
   // Set up user data to display on Profile
-  const [userData, setUserData] = useState({
-    firstname: '',
-    lastname: '',
-    username: authStatus.username,
-    password: '',
-    confirmPassword: '',
-    email: '',
-    linkedin: '',
-    githubhandle: '',
-    personalpage: '',
-    about: '',
-  });
-
 
   const handleEditFormSubmit = async (e) => {
     e.preventDefault();
@@ -53,6 +40,7 @@ const Profile = (props) => {
 
     const body = { linkedin, githubhandle, personalpage, about }
 
+    console.log('authstatus.username from profile', authStatus.username)
     await fetch(`/api/profile/${authStatus.username}`, {
       method: 'PUT', // or 'PUT'
       headers: {
@@ -113,7 +101,8 @@ const Profile = (props) => {
       console.log('loggedInStatus', loggedInStatus);
       let userLogin = loggedInStatus.data[1];
 
-      const res = await axios.get(`/api/profile/${userLogin}`);
+      console.log('userlogin', userLogin)
+      const res = await axios.get(`/api/profile/${userLogin.username}`);
       // Expect in response an object with all User table column properties
       // const userTableData = await res.json();
       // setUserData(userTableData);
@@ -126,6 +115,7 @@ const Profile = (props) => {
         personalpage,
         about } = res.data;
 
+        console.log('resdata', res.data)
       setRegistrationInputs({
         firstname: firstname,
         lastname: lastname,
@@ -135,7 +125,6 @@ const Profile = (props) => {
         personalpage: personalpage,
         about: about,
       });
-      console.log('reginputs', registrationInputs)
     };
     getUser();
   }, []);
@@ -154,35 +143,37 @@ const Profile = (props) => {
    *     Same page without edit button functionality (READ-ONLY)
   */
 
-  if (!Object.keys(userData).length) {
-    return <Spinner />;
-  }
-  else if (userData.err) {
-    return <Container>Could not load user</Container>;
-  }
-
-  function capitalized(word) {
-    return word.split('').map(function(el, i) {
-      return i === 0 ? el.toUpperCase(): el.toLowerCase()
-    }).join('')
-  }
+  // if (!Object.keys(userData).length) {
+  //   return <Spinner />;
+  // } else if (userData.err) {
+  //   return <Container>Could not load user</Container>;
+  // }
 
   return (
-    <Container id='userProfileContainer'>
-      <Row className='mb-4' id='row1'>
-        <h3>
-          {capitalized(authStatus.username)}'s Developer Profile
-        </h3>
-        <img id='profilePic' src='https://www.clker.com/cliparts/Z/j/o/Z/g/T/turquoise-anonymous-man-hi.png' />
+    <Container id="userProfileContainer">
+      <Row className="mb-4" id="row1">
+        <h3>{authStatus.username}'s Developer Profile</h3>
+        <img
+          id="profilePic"
+          src="https://www.clker.com/cliparts/Z/j/o/Z/g/T/turquoise-anonymous-man-hi.png"
+        />
       </Row>
-      <Row id='row2'>
-        <Col className='cardHeader' id='bioCard'>
+      <Row id="row2">
+        <Col className="cardHeader" id="bioCard">
           <Fragment>Bio</Fragment>
         </Col>
-        <Col className='cardHeader ml-5' id='contactInfoCard'>
+        <Col className="cardHeader ml-5" id="contactInfoCard">
           <Fragment>Where else can your future teammates contact you?</Fragment>
         </Col>
       </Row>
+      {/* <div className="row">
+        <div className="col">Full Name: {userData.username}</div>
+        <div className="col">Github: {userData.githubhandle}</div>
+      </div>
+      <div className="row">
+        <div className="col">About: {userData.about}</div>
+        <div className="col">LinkedIn: {userData.linkedin}</div>
+      </div> */}
       <div className="row">
         <div className="col">
           Full Name: {registrationInputs.username}
@@ -207,17 +198,6 @@ const Profile = (props) => {
           Personal Site/Portfolio:{registrationInputs.personalpage}
         </div>
       </div>
-
-      {/* <Popup trigger={<button> I'm interested!</button>} modal>
-        {(close) => (
-          <PopUpBox
-            creatorName={creator_username}
-            currentName={authStatus.username}
-            currentEmail={authStatus.email}
-            creatorEmail={email}
-            projectName={name}
-          />
-        )} */}
 
       <Popup trigger={<button> Edit Profile</button>} modal>
         {(close) => (
@@ -281,12 +261,6 @@ const Profile = (props) => {
         </button>  */}
     </Container>
   );
-}
-
-// export default () => (
-//   <Popup trigger={<button> Trigger</button>} position="right center">
-//     <div>Popup content here !!</div>
-//   </Popup>
-// );
+};
 
 export default Profile;

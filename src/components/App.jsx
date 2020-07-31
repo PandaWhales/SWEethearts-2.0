@@ -15,15 +15,16 @@ const App = () => {
   const [authStatus, setAuthStatus] = useState({
     isLoggedIn: false,
     username: '',
+    email: '',
   });
 
   useEffect(() => {
     const fetchLoggedInUser = async () => {
       const loggedInStatus = await axios.get('/api/loginstatus');
-      console.log('loggedInStatus', loggedInStatus);
       setAuthStatus({
         isLoggedIn: loggedInStatus.data[0].isLoggedIn,
-        username: loggedInStatus.data[1],
+        username: loggedInStatus.data[1].username,
+        email: loggedInStatus.data[1].email,
       });
     };
     fetchLoggedInUser();
@@ -39,41 +40,21 @@ const App = () => {
         <Switch>
           {/* Render given component if given path matches current URL */}
           {/* <Route exact path="/" component={Landing} /> */}
-          <Route
-            exact
-            path="/"
-            render={() => <Landing authStatus={authStatus} />}
-          />
+          <Route exact path="/" render={() => <Landing authStatus={authStatus} />} />
           <Route
             exact
             path="/login"
-            render={() => (
-              <Login authStatus={authStatus} setAuthStatus={setAuthStatus} />
-            )}
+            render={() => <Login authStatus={authStatus} setAuthStatus={setAuthStatus} />}
           />
           <Route
             exact
             path="/signup"
-            render={() => (
-              <Signup authStatus={authStatus} setAuthStatus={setAuthStatus} />
-            )}
+            render={() => <Signup authStatus={authStatus} setAuthStatus={setAuthStatus} />}
           />
-          <Route
-            exact
-            path="/explore"
-            render={() => <Explore authStatus={authStatus} />}
-          />
+          <Route exact path="/explore" render={() => <Explore authStatus={authStatus} />} />
           <Route exact path="/idea" component={IdeaPage} />
-          <Route
-            exact
-            path="/submit"
-            render={() => <SubmitIdea authStatus={authStatus} />}
-          />
-          <Route
-            exact
-            path="/profile"
-            render={() => <Profile authStatus={authStatus} />}
-          />
+          <Route exact path="/submit" render={() => <SubmitIdea authStatus={authStatus} />} />
+          <Route exact path="/profile" render={() => <Profile authStatus={authStatus} />} />
         </Switch>
       </>
     </Router>

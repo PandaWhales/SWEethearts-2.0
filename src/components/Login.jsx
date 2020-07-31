@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import '../styles/login-signup.scss';
 import '../../node_modules/bootstrap/dist/css/bootstrap.css';
 import { Form, Button } from 'react-bootstrap';
+import axios from 'axios';
 
 const Login = (props) => {
   const { authStatus, setAuthStatus } = props;
@@ -10,6 +11,7 @@ const Login = (props) => {
   const [loginInputs, setLoginInputs] = useState({
     username: '',
     password: '',
+    email: '',
   });
 
   //used to toggle error message if auth fails
@@ -17,6 +19,7 @@ const Login = (props) => {
   const [loginStatus, setLoginStatus] = useState(null);
 
   const handleSubmit = async (e) => {
+    let status;
     e.preventDefault();
     const { username, password } = loginInputs;
     const body = {
@@ -30,10 +33,12 @@ const Login = (props) => {
       },
       body: JSON.stringify(body),
     });
-
-    if (response.status === 200) {
+    status = response.status;
+    let data = await response.json();
+    if (status === 200) {
+      let email;
       setLoginStatus(true);
-      setAuthStatus({ isLoggedIn: true, username });
+      setAuthStatus({ isLoggedIn: true, username: data.username, email: data.email });
     } else setLoginStatus(false);
   };
 
@@ -52,20 +57,12 @@ const Login = (props) => {
         <Form>
           <Form.Group controlId="username">
             <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="username"
-              placeholder="Username"
-              onChange={setInput}
-            />
+            <Form.Control type="username" placeholder="Username" onChange={setInput} />
           </Form.Group>
 
           <Form.Group controlId="password">
             <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              onChange={setInput}
-            />
+            <Form.Control type="password" placeholder="Password" onChange={setInput} />
           </Form.Group>
 
           <Button variant="primary" type="submit" onClick={handleSubmit}>
@@ -75,6 +72,9 @@ const Login = (props) => {
             Sorry, your username/password was invalid.
           </div>
         </Form>
+        <Button variant="primary" type="link" href="/api/auth/github">
+          Log In with GitHub
+        </Button>
       </div>
     </div>
   );

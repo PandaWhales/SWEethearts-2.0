@@ -4,13 +4,11 @@ require('dotenv').config();
 const PG_URI = process.env.elephantURI;
 
 const pool = new Pool({
-	connectionString: PG_URI,
+  connectionString: PG_URI,
 });
 
 module.exports = {
-	query: (text, params, callback) => {
-		console.log('executed query', text);
-		console.log('params', params)
-		return pool.query(text, params, callback);
-	},
+  query: (text, params, callback) => {
+    return pool.query(text, params, callback);
+  },
 };

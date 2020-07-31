@@ -41,8 +41,7 @@ const Signup = (props) => {
       about,
       userTechStack: [],
     } = registrationInputs;
-    if (password !== confirmPassword)
-      return setErrorMsg(`Passwords don't match!`);
+    if (password !== confirmPassword) return setErrorMsg(`Passwords don't match!`);
 
     const body = {
       firstname,
@@ -64,12 +63,11 @@ const Signup = (props) => {
       },
       body: JSON.stringify(body),
     });
-    
+
     if (response.status === 200) {
       setRegisterStatus(true);
       setAuthStatus({ isLoggedIn: true, username });
-    } else
-    setErrorMsg('New user could not be created - duplicate username/email');
+    } else setErrorMsg('New user could not be created - duplicate username/email');
   };
 
   const setInput = (e) => {
@@ -78,68 +76,44 @@ const Signup = (props) => {
       [e.target.id]: e.target.value,
     });
   };
-  
+
   return registerStatus || authStatus.isLoggedIn ? (
     <Redirect
-    to={{
-      pathname: '/explore',
-    }}
+      to={{
+        pathname: '/explore',
+      }}
     />
-    ) : (
-      <div className="login-container">
+  ) : (
+    <div className="login-container">
       {/* <Profile registrationInputs={registrationInputs} setRegistrationInputs={setRegistrationInputs}/> */}
-      <div className="login-box">
+      <div className="login-box2">
         <center>
           <h4>Welcome!</h4>
         </center>
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="username">
             <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="username"
-              placeholder="Username"
-              onChange={setInput}
-              required
-            />
+            <Form.Control type="username" placeholder="Username" onChange={setInput} required />
           </Form.Group>
 
           <Form.Group controlId="firstname">
             <Form.Label>First Name</Form.Label>
-            <Form.Control
-              type="firstname"
-              placeholder="First Name"
-              onChange={setInput}
-              required
-            />
+            <Form.Control type="firstname" placeholder="First Name" onChange={setInput} required />
           </Form.Group>
 
           <Form.Group controlId="lastname">
             <Form.Label>Last Name</Form.Label>
-            <Form.Control
-              type="lastname"
-              placeholder="Last Name"
-              onChange={setInput}
-              required
-            />
+            <Form.Control type="lastname" placeholder="Last Name" onChange={setInput} required />
           </Form.Group>
 
           <Form.Group controlId="email">
             <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="Email"
-              onChange={setInput}
-            />
+            <Form.Control type="email" placeholder="Email" onChange={setInput} />
           </Form.Group>
 
           <Form.Group controlId="password">
             <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              onChange={setInput}
-              required
-            />
+            <Form.Control type="password" placeholder="Password" onChange={setInput} required />
           </Form.Group>
 
           <Form.Group controlId="confirmPassword">
@@ -154,11 +128,7 @@ const Signup = (props) => {
 
           <Form.Group controlId="linkedin">
             <Form.Label>LinkedIn</Form.Label>
-            <Form.Control
-              type="linkedin"
-              placeholder="LinkedIn URL"
-              onChange={setInput}
-            />
+            <Form.Control type="linkedin" placeholder="LinkedIn URL" onChange={setInput} required />
           </Form.Group>
 
           <Form.Group controlId="githubhandle">
@@ -167,6 +137,7 @@ const Signup = (props) => {
               type="githubhandle"
               placeholder="gitHubHandle URL"
               onChange={setInput}
+              required
             />
           </Form.Group>
 
@@ -176,16 +147,13 @@ const Signup = (props) => {
               type="personalpage"
               placeholder="Personal Page URL"
               onChange={setInput}
+              required
             />
           </Form.Group>
 
           <Form.Group controlId="about">
             <Form.Label>About</Form.Label>
-            <Form.Control
-              type="about"
-              placeholder="About you"
-              onChange={setInput}
-            />
+            <Form.Control type="about" placeholder="About you" onChange={setInput} required />
           </Form.Group>
 
           <Button variant="primary" type="submit">
