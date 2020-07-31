@@ -1,9 +1,9 @@
 import React, { Fragment, useState, useEffect } from 'react'
-import { Container, Col, Row, Button, Form } from 'react-bootstrap';
+import { Container, Col, Row, Button, Form, Jumbotron } from 'react-bootstrap';
 import Spinner from './Spinner';
 import '../styles/user-profile.scss';
 import axios from 'axios';
-
+import PopUpBox from "reactjs-popup";
 import Popup from "reactjs-popup";
 
 const Profile = (props) => {
@@ -13,10 +13,10 @@ const Profile = (props) => {
    * authStatus always passed in from App
    */
   let { ideaCreator, authStatus } = props;
-  console.log('auth',authStatus)
+  console.log('auth', authStatus)
 
   let { username } = authStatus;
- 
+
   const [registrationInputs, setRegistrationInputs] = useState({
     firstname: '',
     lastname: '',
@@ -45,13 +45,13 @@ const Profile = (props) => {
     about: '',
   });
 
-  
+
   const handleEditFormSubmit = async (e) => {
     e.preventDefault();
 
-    const {linkedin, githubhandle, personalpage, about} = registrationInputs
+    const { linkedin, githubhandle, personalpage, about } = registrationInputs
 
-    const body = {linkedin, githubhandle, personalpage, about}
+    const body = { linkedin, githubhandle, personalpage, about }
 
     await fetch(`/api/profile/${authStatus.username}`, {
       method: 'PUT', // or 'PUT'
@@ -60,8 +60,63 @@ const Profile = (props) => {
       },
       body: JSON.stringify(body),
     })
-    .then(response => response.json())
-    .then(data => {
+      .then(response => response.json())
+      .then(data => {
+        const { firstname,
+          lastname,
+          username,
+          email,
+          linkedin,
+          githubhandle,
+          personalpage,
+          about } = data
+
+        setRegistrationInputs({
+          ...registrationInputs,
+          firstname: firstname,
+          lastname: lastname,
+          username: username,
+          email: email,
+          linkedin: linkedin,
+          githubhandle: githubhandle,
+          personalpage: personalpage,
+          about: about,
+        });
+
+        console.log('Success:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    window.location.reload(false);
+    console.log('refresh here')
+  }
+
+  const setInput = (e) => {
+    //   setUserData({
+    //   ...userData,
+    //   [e.target.id]: e.target.value,
+    // });
+    setRegistrationInputs({
+      ...registrationInputs,
+      [e.target.id]: e.target.value,
+    });
+  };
+
+
+  // componentDidMount() functional equivalent
+  useEffect(() => {
+    const getUser = async () => {
+      // Get all existing user data, sending username as a parameter
+
+      const loggedInStatus = await axios.get('/api/loginstatus');
+      console.log('loggedInStatus', loggedInStatus);
+      let userLogin = loggedInStatus.data[1];
+
+      const res = await axios.get(`/api/profile/${userLogin}`);
+      // Expect in response an object with all User table column properties
+      // const userTableData = await res.json();
+      // setUserData(userTableData);
       const { firstname,
         lastname,
         username,
@@ -69,61 +124,8 @@ const Profile = (props) => {
         linkedin,
         githubhandle,
         personalpage,
-        about } = data
-      
-      setRegistrationInputs({
-        ...registrationInputs,
-        firstname: firstname,
-        lastname: lastname,
-        username: username,
-        email: email,
-        linkedin: linkedin,
-        githubhandle: githubhandle,
-        personalpage: personalpage,
-        about: about,
-      });
+        about } = res.data;
 
-      console.log('Success:', data);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-    // window.location="/profile";
-    console.log('refresh here')
-  }
-
-  const setInput = (e) => {
-      //   setUserData({
-      //   ...userData,
-      //   [e.target.id]: e.target.value,
-      // });
-        setRegistrationInputs({
-          ...registrationInputs,
-          [e.target.id]: e.target.value,
-        });
-    };
-
-
-  // componentDidMount() functional equivalent
-  useEffect(() => {
-    const getUser = async () => {
-      // Get all existing user data, sending username as a parameter
-      console.log('username', authStatus.username);
-      console.log('loggedin', authStatus.isLoggedIn);
-      const res = await axios.get(`/api/profile/${authStatus.username}`);
-      // Expect in response an object with all User table column properties
-      // const userTableData = await res.json();
-      // setUserData(userTableData);
-      const {firstname,
-        lastname,
-        username,
-        email,
-        linkedin,
-        githubhandle,
-        personalpage,
-        about} = res.data;
-
-        console.log('dattaaaa', res.data)
       setRegistrationInputs({
         firstname: firstname,
         lastname: lastname,
@@ -140,7 +142,7 @@ const Profile = (props) => {
 
   /* 
    * PROFILE COMPONENT USER FLOW:
-
+  
    *   Case 1: Viewing your own profile (READ and WRITE)
    *       On first render, display all data in this DB row (distinguished by `username`)
    *       
@@ -159,11 +161,17 @@ const Profile = (props) => {
     return <Container>Could not load user</Container>;
   }
 
+  function capitalized(word) {
+    return word.split('').map(function(el, i) {
+      return i === 0 ? el.toUpperCase(): el.toLowerCase()
+    }).join('')
+  }
+
   return (
     <Container id='userProfileContainer'>
       <Row className='mb-4' id='row1'>
         <h3>
-          {authStatus.username}'s Developer Profile
+          {capitalized(authStatus.username)}'s Developer Profile
         </h3>
         <img id='profilePic' src='https://www.clker.com/cliparts/Z/j/o/Z/g/T/turquoise-anonymous-man-hi.png' />
       </Row>
@@ -182,84 +190,95 @@ const Profile = (props) => {
         <div className="col">
           Github: {registrationInputs.githubhandle}
         </div>
-        </div>
-        <div className="row">
+      </div>
+      <div className="row">
         <div className="col">
           About: {registrationInputs.about}
         </div>
         <div className="col">
           LinkedIn: {registrationInputs.linkedin}
         </div>
-        </div>
-        <div className="row">
+      </div>
+      <div className="row">
         <div className="col">
-          Tech Stack: 
+          Tech Stack:
         </div>
         <div className="col">
           Personal Site/Portfolio:{registrationInputs.personalpage}
         </div>
-        </div>
+      </div>
 
+      {/* <Popup trigger={<button> I'm interested!</button>} modal>
+        {(close) => (
+          <PopUpBox
+            creatorName={creator_username}
+            currentName={authStatus.username}
+            currentEmail={authStatus.email}
+            creatorEmail={email}
+            projectName={name}
+          />
+        )} */}
 
-        <Popup trigger={<button> Trigger</button>} position="right center">
-           <div>
-             <Form onSubmit={handleEditFormSubmit}>
-              <Form.Group controlId="linkedin">
-                <Form.Label>LinkedIn</Form.Label>
-                <Form.Control
-                type="linkedin"
-                placeholder="LinkedIn URL"
-                value={registrationInputs.linkedin}
-                onChange={setInput}
-                />
-              </Form.Group>
+      <Popup trigger={<button> Edit Profile</button>} modal>
+        {(close) => (
+            <Jumbotron>
+              <h1>Update Your Peronal Info</h1>
+              <div>
+                <Form onSubmit={handleEditFormSubmit}>
+                  <Form.Group controlId="linkedin">
+                    <Form.Label>LinkedIn</Form.Label>
+                    <Form.Control
+                      type="linkedin"
+                      placeholder="LinkedIn URL"
+                      value={registrationInputs.linkedin}
+                      onChange={setInput}
+                    />
+                  </Form.Group>
 
-              <Form.Group controlId="githubhandle">
-                <Form.Label>GitHub</Form.Label>
-                <Form.Control
-                type="githubhandle"
-                placeholder="gitHubHandle URL"
-                value={registrationInputs.githubhandle}
-                onChange={setInput}
-                />
-              </Form.Group>
+                  <Form.Group controlId="githubhandle">
+                    <Form.Label>GitHub</Form.Label>
+                    <Form.Control
+                      type="githubhandle"
+                      placeholder="gitHubHandle URL"
+                      value={registrationInputs.githubhandle}
+                      onChange={setInput}
+                    />
+                  </Form.Group>
 
-          <Form.Group controlId="personalpage">
-            <Form.Label>Personal Page</Form.Label>
-            <Form.Control
-              type="personalpage"
-              placeholder="Personal Page URL"
-              value={registrationInputs.personalpage}
-              onChange={setInput}
-            />
-          </Form.Group>
+                  <Form.Group controlId="personalpage">
+                    <Form.Label>Personal Page</Form.Label>
+                    <Form.Control
+                      type="personalpage"
+                      placeholder="Personal Page URL"
+                      value={registrationInputs.personalpage}
+                      onChange={setInput}
+                    />
+                  </Form.Group>
 
-          <Form.Group controlId="about">
-            <Form.Label>About</Form.Label>
-            <Form.Control
-              type="about"
-              placeholder="About you"
-              value={registrationInputs.about}
-              onChange={setInput}
-            />
-          </Form.Group>
+                  <Form.Group controlId="about">
+                    <Form.Label>About</Form.Label>
+                    <Form.Control
+                      type="about"
+                      placeholder="About you"
+                      value={registrationInputs.about}
+                      onChange={setInput}
+                    />
+                  </Form.Group>
 
-          <Button variant="primary" type="submit" >
-            Submit
-          </Button>
-             </Form>
-           </div>
-        </Popup>
-        
-         {/* <button onClick={handleformsubmit}> 
+                  <Button variant="primary" type="submit" >
+                    Submit
+                </Button>
+                </Form>
+              </div>
+            </Jumbotron>
+        )}
+      </Popup>
+      {/* <button onClick={handleformsubmit}> 
           <EditProfile />
           // we fill out the form
           // hit submit and do a post request to database
           // .then window.location profile page to automatically do get request
         </button>  */}
-
-
-
     </Container>
   );
 }
