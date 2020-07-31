@@ -13,23 +13,20 @@ const redirectToPath = (history, path) => {
 
 const Landing = ({ history }) => {
   return (
-    <Container fluid className='container'>
+    <Container fluid className="container" style={{ marginTop: '20vh' }}>
       <div className="mt-5">
-        <h1 className="d-flex justify-content-center">
-          {" "}
-          Welcome to Scratch Project{" "}
-        </h1>
+        <h1 className="d-flex justify-content-center"> Welcome to Scratch Project </h1>
         <br />
         <h2 className="mb-5 d-flex justify-content-center">
-          {" "}
-          A place where developers make their dreams come true{" "}
+          {' '}
+          A place where developers make their dreams come true{' '}
         </h2>
         <br />
       </div>
       <div className="mt-5 d-flex justify-content-center">
         <Button
           className="w-25"
-          onClick={() => redirectToPath(history, "/explore")}
+          onClick={() => redirectToPath(history, '/explore')}
           size="lg"
           variant="outline-primary"
           block

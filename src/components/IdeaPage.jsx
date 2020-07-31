@@ -3,6 +3,8 @@ import { NavLink } from 'react-router-dom';
 import Spinner from './Spinner';
 import '../styles/ideapage.scss';
 import { Container, Col, Row, Button } from 'react-bootstrap';
+import Popup from 'reactjs-popup';
+import PopUpBox from './PopUpBox.jsx';
 
 const IdeaPage = (props) => {
   //passed in from Explore
@@ -20,14 +22,18 @@ const IdeaPage = (props) => {
     setIdeaData(parsed);
   };
 
-  const handleInterestClick = async () => {
-    setInterested(true);
-    //TODO: actually build out functionality to email/notify creator
-  };
+  //TODO: actually build out functionality to email/notify creator
+  // const handleInterestClick = async () => {
+  //   // seethearts 1.0 code
+  //   // setInterested(true);
+  //   //check if user is logged in
+  //   //store username in variable
+  //   //if no user logged in, redirect to login page
+  //   //otherwise pop up modal
+  // };
 
   if (!Object.keys(ideaData).length) return <Spinner />;
-  else if (ideaData.err)
-    return <Container id="idea-wrapper">Could not load idea</Container>;
+  else if (ideaData.err) return <Container id="idea-wrapper">Could not load idea</Container>;
 
   let {
     name,
@@ -41,6 +47,7 @@ const IdeaPage = (props) => {
     participants,
     techStacks,
     profilepic,
+    email,
   } = ideaData;
 
   return (
@@ -64,13 +71,9 @@ const IdeaPage = (props) => {
 
           <h4>WHEN</h4>
           <Container>
-            <h6>
-              Start Date: {when_start ? when_start.substring(0, 10) : undefined}
-            </h6>
+            <h6>Start Date: {when_start ? when_start.substring(0, 10) : undefined}</h6>
             {when_end ? (
-              <h6>
-                End Date: {when_end ? when_end.substring(0, 10) : undefined}
-              </h6>
+              <h6>End Date: {when_end ? when_end.substring(0, 10) : undefined}</h6>
             ) : undefined}
           </Container>
 
@@ -86,7 +89,7 @@ const IdeaPage = (props) => {
                     pathname: '/profile',
                     state: {
                       ideaCreator: creator_username,
-                      authStatus
+                      authStatus,
                     },
                   }}
                 >
@@ -103,7 +106,6 @@ const IdeaPage = (props) => {
             </ul>
           </Container>
         </Col>
-
         <Col lg={5}>
           <Row>
             <Col>
@@ -119,19 +121,25 @@ const IdeaPage = (props) => {
 
           <Container>
             <Row className="mx-auto">
-              {!interested ? (
-                <Button
-                  onClick={handleInterestClick}
-                  variant="info"
-                  className="m-2"
-                >
-                  I'm Interested!
-                </Button>
-              ) : (
-                  <Button disabled variant="info" className="m-2">
-                    Idea Creator Notified!
+              <Popup
+                trigger={
+                  <Button variant="info" className="m-2">
+                    I'm interested!
                   </Button>
+                }
+                modal
+              >
+                {(close) => (
+                  <PopUpBox
+                    creatorName={creator_username}
+                    currentName={authStatus.username}
+                    // currentEmail={undefined}
+                    currentEmail={authStatus.email}
+                    creatorEmail={email}
+                    projectName={name}
+                  />
                 )}
+              </Popup>
             </Row>
             <Row className="mx-auto">
               <NavLink to="/explore">

@@ -54,12 +54,7 @@ const Explore = (props) => {
       <Form key={idx}>
         <div key="checkbox" className="mb-2 mt-2 ml-3">
           <Form.Check type="checkbox">
-            <Form.Check.Input
-              type="checkbox"
-              isValid
-              value={tech}
-              onClick={handleTechFilter}
-            />
+            <Form.Check.Input type="checkbox" isValid value={tech} onClick={handleTechFilter} />
             <Form.Check.Label className="ml-2">
               {' '}
               <h4 style={{ color: '#5e93a5' }}>{tech}</h4>{' '}
@@ -81,27 +76,42 @@ const Explore = (props) => {
   //check if user wants to filter for tech, otherwise just return sortedIdeas as-is
   const filteredIdeas = techFilter.length
     ? sortedIdeas.filter((idea) => {
-      //if idea has tech that is inside techFilter, then include that idea
-      for (let i = 0; i < techFilter.length; i++) {
-        const selectedTech = techFilter[i];
-        if (!idea.techstacks.includes(selectedTech)) return false;
-      }
-      return true;
-    })
+        //if idea has tech that is inside techFilter, then include that idea
+        for (let i = 0; i < techFilter.length; i++) {
+          const selectedTech = techFilter[i];
+          if (!idea.techstacks.includes(selectedTech)) return false;
+        }
+        return true;
+      })
     : sortedIdeas;
 
   const generateBoxes = filteredIdeas.map((idea, idx) => {
     return (
-      <Card key={idx} style={{ width: '20rem' }} className="m-3">
-        <Card.Img variant="top" src={idea.image} />
+      <Card
+        key={idx}
+        style={{ width: '20rem', boxShadow: '3px 3px rgb(180,180,180,.5)' }}
+        className="m-3"
+      >
+        <NavLink
+          to={{
+            pathname: '/idea',
+            state: {
+              idea_id: idea.idea_id,
+              authStatus,
+            },
+          }}
+        >
+          <Card.Img
+            variant="top"
+            src={idea.image}
+            style={{ height: '15rem', objectFit: 'cover' }}
+          />
+        </NavLink>
         <Card.Body>
           <Card.Title>{idea.name}</Card.Title>
           <Card.Text style={{ fontWeight: 300 }}>{idea.description}</Card.Text>
           <Card.Text style={{ fontSize: 12, fontStyle: 'italic' }}>
-            <span style={{ fontSize: 13, fontWeight: 'bold' }}>
-              Tech Stack:{' '}
-            </span>{' '}
-            <br />
+            <span style={{ fontSize: 13, fontWeight: 'bold' }}>Tech Stack: </span> <br />
             {idea.techstacks.join(', ')}
           </Card.Text>
           <NavLink
@@ -145,10 +155,7 @@ const Explore = (props) => {
         <Col lg={2} className="mt-4">
           <Row noGutters>
             {' '}
-            <h4
-              className="mb-4"
-              style={{ fontStyle: 'italic', fontWeight: 400, marginTop: 130 }}
-            >
+            <h4 className="mb-4" style={{ fontStyle: 'italic', fontWeight: 400, marginTop: 130 }}>
               {' '}
               Choose your tech stack:{' '}
             </h4>
@@ -164,11 +171,7 @@ const Explore = (props) => {
     </Container>
   );
 
-  return response.length === 1 ? (
-    <Spinner />
-  ) : (
-      <Fragment> {explorePage} </Fragment>
-    );
+  return response.length === 1 ? <Spinner /> : <Fragment> {explorePage} </Fragment>;
 };
 
 export default Explore;

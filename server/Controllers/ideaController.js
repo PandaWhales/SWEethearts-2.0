@@ -22,7 +22,6 @@ ideaController.getIdeas = (req, res, next) => {
         message: { err: 'An error occurred' },
       });
     }
-    // console.log('results', results.rows);
     res.locals.ideas = results.rows;
     return next();
   });
@@ -58,38 +57,13 @@ ideaController.submitIdea = (req, res, next) => {
     queryValue1 = [name, description, why, whenStart, teamNumberInt, username];
   } else if (!imageURL) {
     queryText1 = `INSERT INTO Ideas (name, description, why, when_start, when_end, who, creator_username) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING idea_id`;
-    queryValue1 = [
-      name,
-      description,
-      why,
-      whenStart,
-      whenEnd,
-      teamNumberInt,
-      username,
-    ];
+    queryValue1 = [name, description, why, whenStart, whenEnd, teamNumberInt, username];
   } else if (!whenEnd) {
     queryText1 = `INSERT INTO Ideas (name, description, why, when_start, who, image, creator_username) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING idea_id`;
-    queryValue1 = [
-      name,
-      description,
-      why,
-      whenStart,
-      teamNumberInt,
-      imageURL,
-      username,
-    ];
+    queryValue1 = [name, description, why, whenStart, teamNumberInt, imageURL, username];
   } else {
     queryText1 = `INSERT INTO Ideas (name, description, why, when_start, when_end, who, image, creator_username) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING idea_id`;
-    queryValue1 = [
-      name,
-      description,
-      why,
-      whenStart,
-      whenEnd,
-      teamNumberInt,
-      imageURL,
-      username,
-    ];
+    queryValue1 = [name, description, why, whenStart, whenEnd, teamNumberInt, imageURL, username];
   }
   let addedIdeaId;
   model.query(queryText1, queryValue1, async (err, result) => {
@@ -109,7 +83,6 @@ ideaController.submitIdea = (req, res, next) => {
     for (let i = 0; i < techStack.length; i += 1) {
       quertValue2.push([addedIdeaId, techStack[i]]);
     }
-    // console.log(techStack);
     for (let i = 0; i < techStack.length; i += 1) {
       queryText2 = `INSERT INTO Idea_tech_stacks (idea_id, tech_id) VALUES ($1, $2)`;
       await model.query(queryText2, quertValue2[i], (err) => {
@@ -155,6 +128,10 @@ ideaController.getOneIdea = async (req, res, next) => {
     WHERE idea_id = ${id}`;
     const techStacks = await model.query(stackQueryText);
     res.locals.idea = { ...res.locals.idea, techStacks: techStacks.rows };
+
+    const emailQueryText = `SELECT email FROM user_credentials WHERE username = '${res.locals.idea.username}';`;
+    const userEmail = await model.query(emailQueryText);
+    res.locals.idea = { ...res.locals.idea, email: userEmail.rows[0].email };
 
     return next();
   } catch (err) {

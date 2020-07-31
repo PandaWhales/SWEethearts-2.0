@@ -113,8 +113,10 @@ authController.editProfile = async (req, res, next) => {
 authController.isLoggedIn = (req, res, next) => {
   if (req.user) {
     res.locals.isLoggedIn = { isLoggedIn: true };
+    res.locals.user = req.user;
+
     // req.user.username populated for localStorage, req.user populated for github auth
-    res.locals.user = req.user.username ? req.user.username : req.user;
+    // res.locals.user = req.user.username ? req.user.username : req.user;
     console.log('req.user', req.user);
     next();
   } else {
