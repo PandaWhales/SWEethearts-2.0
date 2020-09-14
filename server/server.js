@@ -35,7 +35,7 @@ const corsOptions = {
  */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.resolve(__dirname, 'public')));
+app.use(express.static(path.resolve(__dirname, '../dist')));
 app.use(
   session({
     secret: 'secret',
