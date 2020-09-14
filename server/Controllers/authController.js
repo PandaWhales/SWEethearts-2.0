@@ -51,7 +51,6 @@ authController.getProfile = async (req, res, next) => {
   try {
     const userData = await model.query(queryText, [username]);
     [res.locals.userData] = userData.rows;
-    console.log('USER DATA', res.locals.userData);
     return next();
   } catch (err) {
     console.log(err);
@@ -65,28 +64,15 @@ authController.getProfile = async (req, res, next) => {
 
 // middeware to edit profiles (INCOMPLETE)
 authController.editProfile = async (req, res, next) => {
-  const {
-    about,
-    githubhandle,
-    linkedin,
-    personalpage,
-  } = req.body;
+  const { about, githubhandle, linkedin, personalpage } = req.body;
 
-  const { username } = req.params
+  const { username } = req.params;
   const queryText = `UPDATE Users SET linkedin=$1, githubhandle=$2, personalpage=$3, about=$4 WHERE username=$5 RETURNING *`;
 
-  const queryValue = [
-    linkedin,
-    githubhandle,
-    personalpage,
-    about,
-    username,
-  ];
-  console.log('req.body from authcontroller', req.body)
+  const queryValue = [linkedin, githubhandle, personalpage, about, username];
   try {
     const userData = await model.query(queryText, queryValue);
-    res.locals.userData = userData.rows[0]
-    console.log('user data rows from authcontroller', userData.rows)
+    res.locals.userData = userData.rows[0];
     return next();
   } catch (err) {
     console.log(err);
@@ -105,7 +91,6 @@ authController.isLoggedIn = (req, res, next) => {
 
     // req.user.username populated for localStorage, req.user populated for github auth
     // res.locals.user = req.user.username ? req.user.username : req.user;
-    console.log('req.user', req.user);
     next();
   } else {
     res.locals.isLoggedIn = { isLoggedIn: false };
