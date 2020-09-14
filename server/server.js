@@ -35,7 +35,7 @@ const corsOptions = {
  */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.resolve(__dirname, 'public')));
+app.use(express.static(path.resolve(__dirname, '../dist')));
 app.use(
   session({
     secret: 'secret',
@@ -122,7 +122,6 @@ app.get(
     failureRedirect: 'http://localhost:8080/login',
   }),
   async (req, res, next) => {
-    console.log('req.user in callback', req.user);
     const credQueryText = `INSERT INTO User_credentials (username, password) VALUES ($1, $2) ON CONFLICT DO NOTHING`;
     const userQueryText =
       'INSERT INTO Users (username, githubhandle, firstname, lastname) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING';
@@ -134,7 +133,12 @@ app.get(
       // email may need to be changed in the database to not required
       // github has features to hid emails
       await model.query(credQueryText, [req.user.username, req.user.id]);
-      await model.query(userQueryText, [req.user.username, req.user.username, firstname, lastname]);
+      await model.query(userQueryText, [
+        req.user.username,
+        req.user.username,
+        firstname,
+        lastname,
+      ]);
       return next();
     } catch (err) {
       console.log(err);

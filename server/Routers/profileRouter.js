@@ -9,8 +9,7 @@ router.get('/:username', authController.getProfile, (req, res) => {
 });
 
 router.put('/:username', authController.editProfile, (req, res) => {
-  console.log('in editprofile router')
-  res.json(res.locals.userData)
-}) 
+  res.json(res.locals.userData);
+});
 
 module.exports = router;

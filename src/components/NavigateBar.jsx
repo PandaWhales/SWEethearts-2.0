@@ -1,5 +1,8 @@
 import React from 'react';
-import { Navbar, Nav /* Form, FormControl, Button, Container */ } from 'react-bootstrap';
+import {
+  Navbar,
+  Nav /* Form, FormControl, Button, Container */,
+} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -24,7 +27,7 @@ const NavigateBar = ({ authStatus, setAuthStatus }) => {
       {/* Leftside Nav Logo/Link */}
       {/* TODO: Point this href to `/explore` if User is authenticated */}
       <Link to="/">
-        <Navbar.Brand>Scratch Project</Navbar.Brand>
+        <Navbar.Brand>SWEetHearts</Navbar.Brand>
       </Link>
       {/* Rightside Nav Links */}
       {/* Set class for Create Idea and Logout button Nav item to `margin-left: auto;`*/}
@@ -43,7 +46,11 @@ const NavigateBar = ({ authStatus, setAuthStatus }) => {
           </Nav.Link>
         </Link>
         <Link to="/login">
-          <Nav.Link style={{ color: 'white' }} href="/login" onClick={logoutHandler}>
+          <Nav.Link
+            style={{ color: 'white' }}
+            href="/login"
+            onClick={logoutHandler}
+          >
             Log Out
           </Nav.Link>
         </Link>
@@ -54,7 +61,7 @@ const NavigateBar = ({ authStatus, setAuthStatus }) => {
       {/* Leftside Nav Logo/Link */}
       {/* TODO: Point this href to `/explore` if User is authenticated */}
       <Link to="/">
-        <Navbar.Brand>Scratch Project</Navbar.Brand>
+        <Navbar.Brand>SWEetHearts</Navbar.Brand>
       </Link>
       {/* Rightside Nav Links */}
       {/* Set class for Login and Signup button Nav item to `margin-left: auto;`*/}
