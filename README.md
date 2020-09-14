@@ -1,4 +1,5 @@
 # SWEetHearts
+Collaborative platform for software engineers to share ideas and connect with other engineers to make the ideas come true
 
 ## About
 
